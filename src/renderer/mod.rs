@@ -32,33 +32,34 @@ pub mod renderer {
         pub fn new(sdl_video: VideoSubsystem, fullscreen: bool, opengl: bool, scale: Scale) -> RendererResult<Renderer> {
             info!("[SDL] Creating window fullscreen={:?} opengl={:?}", fullscreen, opengl);
 
-            let mut window_builder = sdl_video.window("PX8",
-                                                      (px8::SCREEN_WIDTH as usize * scale.factor()) as u32,
-                                                      (px8::SCREEN_HEIGHT as usize * scale.factor()) as u32);
+            let mut window_builder = sdl_video.window(
+                "PX8",
+                (px8::SCREEN_WIDTH as usize * scale.factor()) as u32,
+                (px8::SCREEN_HEIGHT as usize * scale.factor()) as u32
+            );
 
-            let window;
-            if opengl {
-                if fullscreen {
-                    window = window_builder.fullscreen().opengl().build().unwrap();
-                } else {
-                    window = window_builder.resizable().position_centered().opengl().build().unwrap();
-                }
+            let window_builder = if fullscreen {
+                window_builder.fullscreen()
             } else {
-                if fullscreen {
-                    window = window_builder.fullscreen().build().unwrap();
-                } else {
-                    window = window_builder.resizable().position_centered().build().unwrap();
-                }
-            }
+                window_builder.resizable().position_centered()
+            };
+
+            let window = if opengl {
+                window_builder.opengl().build().unwrap()
+            } else {
+                window_builder.build().unwrap()
+            };
 
             info!("[SDL] Creating renderer");
             let renderer = window.renderer().accelerated().present_vsync().build().unwrap();
 
             info!("[SDL] Creating texture");
-            let texture = renderer.create_texture(PixelFormatEnum::BGR24,
-                                                  render::TextureAccess::Streaming,
-                                                  px8::SCREEN_WIDTH as u32,
-                                                  px8::SCREEN_HEIGHT as u32).unwrap();
+            let texture = renderer.create_texture(
+                PixelFormatEnum::BGR24,
+                render::TextureAccess::Streaming,
+                px8::SCREEN_WIDTH as u32,
+                px8::SCREEN_HEIGHT as u32
+            ).unwrap();
 
 
             Ok(Renderer {
@@ -68,9 +69,11 @@ pub mod renderer {
         }
 
         pub fn blit(&mut self, screen: Arc<Mutex<Screen>>) {
-            self.texture.update(None,
-                                &mut *screen.lock().unwrap().buffer_rgb,
-                                px8::SCREEN_WIDTH * 3).unwrap();
+            let _ = self.texture.update(
+                None,
+                &mut *screen.lock().unwrap().buffer_rgb,
+                px8::SCREEN_WIDTH * 3
+            ).unwrap();
 
             self.renderer.clear();
             let _ = self.renderer.copy(&self.texture, None, None);

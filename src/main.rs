@@ -166,31 +166,26 @@ fn main() {
         let mut scale = Scale::Scale4x;
         if matches.opt_present("s") {
             let value = matches.opt_str("s").unwrap().parse::<i32>().unwrap();
-            match value {
-                1 => scale = Scale::Scale1x,
-                2 => scale = Scale::Scale2x,
-                3 => scale = Scale::Scale3x,
-                4 => scale = Scale::Scale4x,
-                5 => scale = Scale::Scale5x,
-                6 => scale = Scale::Scale6x,
-                8 => scale = Scale::Scale8x,
-                10 => scale = Scale::Scale10x,
-                _ => scale = Scale::Scale1x
-            }
+            scale = match value {
+                1 => Scale::Scale1x,
+                2 => Scale::Scale2x,
+                3 => Scale::Scale3x,
+                4 => Scale::Scale4x,
+                5 => Scale::Scale5x,
+                6 => Scale::Scale6x,
+                8 => Scale::Scale8x,
+                10 => Scale::Scale10x,
+                _ => Scale::Scale1x
+            };
         }
 
-        let mut fullscreen = false;
-        if matches.opt_present("f") {
-            fullscreen = true;
-        }
+        let fullscreen = matches.opt_present("f");
 
-        let mut opengl = true;
-        if cfg!(feature = "sdl_renderer") {
-            opengl = false;
-            if matches.opt_present("o") {
-                opengl = true;
-            }
-        }
+        let opengl = if cfg!(feature = "sdl_renderer") {
+            matches.opt_present("o")
+        } else {
+            true
+        };
 
         let mut mode = px8::PX8Mode::PX8;
 
