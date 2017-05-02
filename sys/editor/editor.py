@@ -249,6 +249,7 @@ class SpritesMap(object):
             button.draw()
 
     def draw_information(self):
+        px8_print("%d" % (self.state.mouse_state), 120, 120, 5)
         if self.state.on_current_sprite:
             px8_print("x %d y %d" % (self.state.on_current_sprite_x, self.state.on_current_sprite_y), 0, 120, 5)
         else:

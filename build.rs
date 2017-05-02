@@ -20,8 +20,8 @@ fn prebuild() -> io::Result<()> {
 
     let mut f = File::create(&dest_path).unwrap();
 
-    f.write_all(format!("pub const SCREEN_WIDTH: usize = {:?};\n", screen_width.parse::<u32>().unwrap()).as_bytes());
-    f.write_all(format!("pub const SCREEN_HEIGHT: usize = {:?};\n", screen_height.parse::<u32>().unwrap()).as_bytes());
+    let _ = f.write_all(format!("pub const SCREEN_WIDTH: usize = {:?};\n", screen_width.parse::<u32>().unwrap()).as_bytes());
+    let _ = f.write_all(format!("pub const SCREEN_HEIGHT: usize = {:?};\n", screen_height.parse::<u32>().unwrap()).as_bytes());
 
     Ok(())
 }

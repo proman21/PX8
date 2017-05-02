@@ -2,7 +2,7 @@ pub mod keys;
 pub mod controllers;
 
 use self::keys::PX8Key;
-use sdl2::mouse::{MouseState, MouseButton};
+use sdl2::mouse::{MouseButton};
 use std::collections::HashMap;
 
 pub struct Mouse {
@@ -92,7 +92,7 @@ impl Players {
         self.mouse.y = y;
     }
 
-    pub fn mouse_button_down(&mut self, mouse_btn: MouseButton, elapsed: f64) {
+    pub fn mouse_button_down(&mut self, mouse_btn: MouseButton) {
         self.mouse.state = match mouse_btn {
             MouseButton::Left => 1,
             MouseButton::Right => 2,
@@ -102,7 +102,7 @@ impl Players {
 
     }
 
-    pub fn mouse_button_up(&mut self, mouse_btn: MouseButton, elapsed: f64) {
+    pub fn mouse_button_up(&mut self) {
         self.mouse.state = 0;
     }
 
@@ -347,6 +347,7 @@ impl Players {
         }
     }
 
+    #[allow(dead_code)]
     pub fn get_value(&self, player: u8, index: u8) -> u8 {
         match self.keys.get(&player) {
             Some(keys) => {
@@ -386,6 +387,7 @@ impl Players {
         }
     }
 
+    #[allow(dead_code)]
     pub fn btn(&mut self, player: u8, index: u8) -> bool {
         self.get_value(player, index) == 1
     }
@@ -394,6 +396,7 @@ impl Players {
         self.get_value_quick(player, index) == 1
     }
 
+    #[allow(dead_code)]
     pub fn get_mouse(&mut self, index: u8) -> i32 {
         match index {
             0 => self.mouse.x,
@@ -402,6 +405,7 @@ impl Players {
         }
     }
 
+    #[allow(dead_code)]
     pub fn get_mouse_state(&mut self) -> u32 {
         self.mouse.state
     }

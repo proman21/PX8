@@ -14,6 +14,7 @@ pub mod renderer {
     use std::sync::{Arc, Mutex};
 
     #[derive(Clone, Debug)]
+    #[allow(dead_code)]
     pub enum RendererError {
         Sdl(String),
         Renderer(String),
@@ -72,7 +73,7 @@ pub mod renderer {
                                 px8::SCREEN_WIDTH * 3).unwrap();
 
             self.renderer.clear();
-            self.renderer.copy(&self.texture, None, None);
+            let _ = self.renderer.copy(&self.texture, None, None);
             self.renderer.present();
         }
 

@@ -9,7 +9,6 @@ use sdl2::Sdl;
 use sdl2::EventPump;
 use std::time::{Duration};
 use sdl2::event::{Event, WindowEvent};
-use sdl2::audio::{AudioSpecDesired};
 
 use std::path::Path;
 
@@ -60,6 +59,7 @@ impl From<String> for FrontendError {
     }
 }
 
+#[allow(dead_code)]
 pub struct Channels {
     tx_input: Sender<Vec<u8>>,
     rx_input: Receiver<Vec<u8>>,
@@ -224,6 +224,7 @@ impl Frontend {
         }
     }
 
+    #[allow(dead_code)]
     pub fn run_native_cartridge(&mut self) {
         self.px8.code_type = px8::Code::RUST;
         self.px8.init_time = self.px8.call_init() * 1000.0;
@@ -275,11 +276,11 @@ impl Frontend {
                     Event::Window { win_event: WindowEvent::SizeChanged(_, _), .. } => {
                         self.renderer.update_dimensions();
                     },
-                    Event::MouseButtonDown {x, y, mouse_btn, ..} => {
-                        self.players.lock().unwrap().mouse_button_down(mouse_btn, self.elapsed_time);
+                    Event::MouseButtonDown {mouse_btn, ..} => {
+                        self.players.lock().unwrap().mouse_button_down(mouse_btn);
                     },
-                    Event::MouseButtonUp {x, y, mouse_btn, ..} => {
-                        self.players.lock().unwrap().mouse_button_up(mouse_btn, self.elapsed_time);
+                    Event::MouseButtonUp {..} => {
+                        self.players.lock().unwrap().mouse_button_up();
                     },
                     Event::KeyDown { keycode: Some(keycode), repeat, .. } => {
                         if let (Some(key), player) = map_keycode(keycode) {
@@ -301,7 +302,6 @@ impl Frontend {
                             }
                         } else if keycode == Keycode::F5 {
                             if editor {
-                                let dt = Local::now();
                                 self.px8.save_current_cartridge();
                             }
                         } else if keycode == Keycode::F6 && editor {

@@ -559,8 +559,8 @@ impl Px8New {
 
             let mut buffer: Vec<u8> = Vec::new();
 
-            for x in 0..SCREEN_WIDTH {
-                for y in 0..SCREEN_HEIGHT {
+            for _ in 0..SCREEN_WIDTH {
+                for _ in 0..SCREEN_HEIGHT {
                     buffer.push(*self.record.images.get(idx).unwrap());
                     buffer.push(*self.record.images.get(idx + 1).unwrap());
                     buffer.push(*self.record.images.get(idx + 2).unwrap());
@@ -725,17 +725,17 @@ impl Px8New {
         if filename.contains(".png") {
             match Cartridge::from_png_raw(filename.clone(), data) {
                 Ok(c) => self.cartridges.push(c),
-                Err(e) => panic!("Impossible to load the png cartridge"),
+                Err(_) => panic!("Impossible to load the png cartridge"),
             }
         } else if filename.contains(".p8") {
             match Cartridge::from_p8_raw(filename.clone(), data) {
                 Ok(c) => self.cartridges.push(c),
-                Err(e) => panic!("Impossible to load the p8 cartridge"),
+                Err(_) => panic!("Impossible to load the p8 cartridge"),
             }
         } else if filename.contains(".py") {
             match Cartridge::from_p8_raw(filename.clone(), data) {
                 Ok(c) => self.cartridges.push(c),
-                Err(e) => panic!("Impossible to load the p8 cartridge"),
+                Err(_) => panic!("Impossible to load the p8 cartridge"),
             }
         } else {
             panic!("Unknown file");
@@ -766,9 +766,7 @@ impl Px8New {
     pub fn switch_code(&mut self) {
         let idx = self.current_cartridge;
 
-        let mut data;
-
-        if self.cartridges[idx].edit {
+        let data = if self.cartridges[idx].edit {
             // Reload the code for the px8 format
             match self.cartridges[idx].format {
                 CartridgeFormat::Px8Format => {
@@ -778,14 +776,14 @@ impl Px8New {
                 _ => ()
             }
 
-            data = self.cartridges[idx].code.get_data().clone();
             self.cartridges[idx].edit = false;
             self.code_type = self._get_code_type(idx);
+            self.cartridges[idx].code.get_data().clone()
         } else {
-            data = self.load_editor("./sys/editor/editor.py".to_string()).clone();
             self.cartridges[idx].edit = true;
             self.code_type = Code::PYTHON;
-        }
+            self.load_editor("./sys/editor/editor.py".to_string()).clone()
+        };
 
         debug!("CODE -> {:?}", data);
 
@@ -800,7 +798,7 @@ impl Px8New {
         }
     }
 
-    pub fn is_editing_current_cartridge(&mut self) -> bool {
+    pub fn is_editing_current_cartridge(&self) -> bool {
         let idx = self.current_cartridge;
         return self.cartridges[idx].edit;
     }
@@ -813,8 +811,6 @@ impl Px8New {
                        info: Arc<Mutex<Info>>,
                        sound: Arc<Mutex<Sound>>,
                        editor: bool) -> bool {
-        let mut data;
-
         info!("START TO LOAD THE PLUGIN");
 
         let gfx_sprites = self.cartridges[idx].gfx.sprites.clone();
@@ -822,7 +818,7 @@ impl Px8New {
 
         self.code_type = self._get_code_type(idx);
 
-        if editor {
+        let data = if editor {
             // Editor mode and original code type is different from Python
             match self.code_type {
                 Code::LUA => {
@@ -837,12 +833,12 @@ impl Px8New {
                 _ => (),
             }
 
-            data = self.load_editor("./sys/editor/editor.py".to_string()).clone();
             self.cartridges[idx].edit = true;
             self.code_type = Code::PYTHON;
+            self.load_editor("./sys/editor/editor.py".to_string()).clone()
         } else {
-            data = self.cartridges[idx].code.get_data().clone();
-        }
+            self.cartridges[idx].code.get_data().clone()
+        };
 
         debug!("CODE -> {:?}", data);
 
@@ -879,7 +875,7 @@ impl Px8New {
         let mut data = "".to_string();
 
         let f = File::open(filename.clone()).unwrap();
-        let mut buf_reader = BufReader::new(f);
+        let buf_reader = BufReader::new(f);
 
         for line in buf_reader.lines() {
             let l = line.unwrap();

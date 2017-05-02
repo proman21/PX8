@@ -1663,17 +1663,13 @@ pub mod plugin {
 
 #[cfg(not(feature = "lua"))]
 pub mod plugin {
-    use chan;
     use chan::{Receiver, Sender};
     use std::sync::{Arc, Mutex};
 
-    use gfx::Sprite;
     use config::Players;
 
-    use px8;
     use px8::info::Info;
 
-    use gfx::{SCREEN_WIDTH, SCREEN_HEIGHT};
     use gfx::Screen;
 
 

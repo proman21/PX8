@@ -479,7 +479,6 @@ pub mod plugin {
 pub mod plugin {
     use std::sync::{Arc, Mutex};
 
-    use gfx::Sprite;
     use config::Players;
 
     use px8::info::Info;

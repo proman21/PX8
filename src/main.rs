@@ -1,3 +1,5 @@
+#![allow(unused_variables, dead_code)]
+
 #[cfg(feature = "lua")]
 extern crate lua;
 
