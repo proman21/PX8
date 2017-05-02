@@ -9,12 +9,24 @@ pub struct Mouse {
     pub x: i32,
     pub y: i32,
     pub state: u32,
+    pub last_state: u32,
     pub delay: f64,
 }
 
 impl Mouse {
     pub fn new() -> Mouse {
-        Mouse{x: 0, y: 0, state: 0, delay: 0.}
+        Mouse {
+            x: 0,
+            y: 0,
+            state: 0,
+            last_state: 0,
+            delay: 0.
+        }
+    }
+
+    pub fn update_state(&mut self, new_state: u32) {
+        self.last_state = self.state;
+        self.state = new_state;
     }
 
 }
@@ -92,21 +104,31 @@ impl Players {
         self.mouse.y = y;
     }
 
-    pub fn mouse_button_down(&mut self, mouse_btn: MouseButton) {
+    pub fn mouse_button_down(&mut self, mouse_btn: MouseButton, elapsed: f64) {
         self.mouse.state = match mouse_btn {
             MouseButton::Left => 1,
             MouseButton::Right => 2,
             MouseButton::Middle => 4,
             _ => 0
         };
-
+        self.mouse.delay = elapsed;
     }
 
     pub fn mouse_button_up(&mut self) {
-        self.mouse.state = 0;
+        self.mouse.update_state(0);
     }
 
     pub fn update(&mut self, elapsed: f64) {
+        if self.mouse.state == 0 && self.mouse.last_state != 0 {
+            let s = self.mouse.last_state;
+            self.mouse.update_state(s)
+        }
+
+        if self.mouse.state != 0 {
+            if elapsed - self.mouse.delay < 0.01 {
+                self.mouse.update_state(0);
+            }
+        }
 
         for (_, keys) in self.keys.iter_mut() {
             if keys.left {

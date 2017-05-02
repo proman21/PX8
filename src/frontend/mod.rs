@@ -256,7 +256,7 @@ impl Frontend {
     fn handle_event(&mut self, editor: bool) {
         info!("Handle Event");
 
-        'main: loop {
+        loop {
             self.times.update();
 
             self.fps_counter.update(self.times.get_last_time());
@@ -271,13 +271,13 @@ impl Frontend {
 
             for event in self.event_pump.poll_iter() {
                 match event {
-                    Event::Quit { .. } => break 'main,
-                    Event::KeyDown { keycode: Some(keycode), .. } if keycode == Keycode::Escape => break 'main,
+                    Event::Quit { .. } => break,
+                    Event::KeyDown { keycode: Some(keycode), .. } if keycode == Keycode::Escape => break,
                     Event::Window { win_event: WindowEvent::SizeChanged(_, _), .. } => {
                         self.renderer.update_dimensions();
                     },
                     Event::MouseButtonDown {mouse_btn, ..} => {
-                        self.players.lock().unwrap().mouse_button_down(mouse_btn);
+                        self.players.lock().unwrap().mouse_button_down(mouse_btn, self.elapsed_time);
                     },
                     Event::MouseButtonUp {..} => {
                         self.players.lock().unwrap().mouse_button_up();
@@ -421,7 +421,7 @@ impl Frontend {
 
             if !self.px8.update(self.players.clone()) {
                 info!("End of PX8 requested");
-                break 'main;
+                break;
             }
 
             self.px8.draw();
