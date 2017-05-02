@@ -93,17 +93,13 @@ impl Players {
     }
 
     pub fn mouse_button_down(&mut self, mouse_btn: MouseButton, elapsed: f64) {
-        if mouse_btn == MouseButton::Left {
-            self.mouse.state = 1;
-        } else if mouse_btn == MouseButton::Right {
-            self.mouse.state = 2;
-        } else if mouse_btn == MouseButton::Middle {
-            self.mouse.state = 4;
-        } else {
-            self.mouse.state = 0;
-        }
+        self.mouse.state = match mouse_btn {
+            MouseButton::Left => 1,
+            MouseButton::Right => 2,
+            MouseButton::Middle => 4,
+            _ => 0
+        };
 
-        self.mouse.delay = elapsed;
     }
 
     pub fn mouse_button_up(&mut self, mouse_btn: MouseButton, elapsed: f64) {
@@ -111,9 +107,6 @@ impl Players {
     }
 
     pub fn update(&mut self, elapsed: f64) {
-        if elapsed - self.mouse.delay > 0.01 {
-            self.mouse.state = 0;
-        }
 
         for (_, keys) in self.keys.iter_mut() {
             if keys.left {
