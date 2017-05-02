@@ -1,4 +1,4 @@
 {
-    "code": "./games/amp/amp.py",
-    "data": "./games/amp/amp.dpx8"
+    "code": "amp.py",
+    "data": "amp.dpx8"
 }

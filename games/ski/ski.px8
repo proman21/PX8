@@ -1,4 +1,4 @@
 {
-    "code": "./games/ski/ski.py",
-    "data": "./games/ski/ski.dpx8"
+    "code": "ski.py",
+    "data": "ski.dpx8"
 }

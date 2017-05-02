@@ -576,12 +576,12 @@ pub struct CartridgeMusic {}
 
 impl CartridgeMusic {
     pub fn new(_: &mut Vec<String>) -> CartridgeMusic {
-        unimplemented!()
+        CartridgeMusic {}
     }
 
     pub fn new_from_bytes(v: Vec<u8>) -> CartridgeMusic {
         info!("MUSIC {:?} {:?}", v, v.len());
-        unimplemented!()
+        CartridgeMusic {}
     }
 
     pub fn empty() -> CartridgeMusic {
@@ -601,13 +601,14 @@ impl CartridgeMap {
     pub fn new(lines: &mut Vec<String>) -> CartridgeMap {
         info!("CartridgeMap");
 
-        let mut map= [[0u32; 32]; gfx::SCREEN_WIDTH];
+        let mut map = [[0u32; 32]; gfx::SCREEN_WIDTH];
         let mut x = 0;
         let mut y = 0;
 
         info!("LINE = {:?}", lines.len());
 
         for line in lines {
+            x = 0;
             let mut i = 0;
 
             while i < 256 {
@@ -938,12 +939,10 @@ impl Cartridge {
             debug!("{}: \"{}\"", section_name, section.len());
         }
 
-        let mut cartridge_code = if code_path.ends_with(".py") {
-            CartridgeCode::new("python".to_string(), &mut code_section)
-        } else if code_path.ends_with(".lua") {
-            CartridgeCode::new("lua".to_string(), &mut code_section)
-        } else {
-            panic!("Unsupported code file extension: {:?}", code_path);
+        let mut cartridge_code = match code_path.extension().and_then(|e| e.to_str()).unwrap() {
+            "py" => CartridgeCode::new("python".to_string(), &mut code_section),
+            "lua" => CartridgeCode::new("lua".to_string(), &mut code_section),
+            _ => panic!("Unsupported code file extension: {:?}", code_path)
         };
 
         cartridge_code.set_filename(code_path.to_string_lossy().into_owned());
